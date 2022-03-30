@@ -1,0 +1,84 @@
+﻿@inherits LayoutComponentBase
+@inject NavigationManager Nav
+
+<div class="page">
+    <main>
+        <div class="container-fluid">
+            <br /><br /><br />
+            <div class="row">
+                @if(header)
+                {
+                    <div class="col-lg-12 text-center @Invisible">
+                        <label>@DateGame</label>
+                        <br>
+                        <div class="btn-group d-inline" role="group" aria-label="Basic example">
+                            <button type="button" class="btn  k-inverse" @onclick="() => Stop()"><i class="fa-solid fa-circle-pause"></i></button>
+                            <button type="button" class="btn  k-danger" @onclick="() => GoGame(500)"><i class="fa-solid fa-play"></i></button>
+                            <button type="button" class="btn  k-danger" @onclick="() => GoGame(250)"><i class="fa-solid fa-forward"></i></button>
+                            <button type="button" class="btn  k-danger" @onclick="() => GoGame(125)"><i class="fa-solid fa-forward-fast"></i></button>
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    <div class="col-lg-12 text-center">
+                        <img src="/img/Kendiro.jpg" alt="headerKendiro" />
+                    </div>
+                }
+            </div>
+
+            <div class="row">
+                <div class="col-lg-12 text-center">
+                    <CascadingValue Value="this">
+                        <br /><br />
+                        @Body
+                    </CascadingValue>
+                </div>
+            </div>
+
+            <div class="k-navbar text-center fixed-bottom @Invisible">
+                <button type="button" class="btn k-danger" @onclick="@(()=>NavigateTo("/"))"><i class="fa-solid fa-house"></i></button>
+                <button type="button" class="btn k-inverse" @onclick="@(()=>NavigateTo("/principal"))"><i class="fa-solid fa-user"></i></button>
+                <button type="button" class="btn k-inverse" @onclick="@(()=>NavigateTo("/dna"))"><i class="fa-solid fa-dna"></i></button>
+                <button type="button" class="btn k-inverse" @onclick="@(()=>NavigateTo("/learn"))"><i class="fa-brands fa-leanpub"></i></button>
+            </div>
+        </div>
+    </main>
+</div>
+
+@code {
+    public DateOnly DateGame { get; set; } = new DateOnly(2500, 1, 1);
+    private System.Threading.Timer _timer;
+    public string Invisible { get; set; } = "invisible";
+    public bool header { get; set; } = false;
+
+    public int Source { get; set; } = 1;
+
+    async Task GoGame(int howFast)
+    {
+        Stop();
+        _timer = new System.Threading.Timer(async _ =>
+        {
+            this.DateGame = this.DateGame.AddDays(1);
+            Source++;
+            await InvokeAsync(StateHasChanged);
+        }, null, 0, howFast);
+    }
+
+    public void Stop()
+    {
+        this._timer?.Dispose();
+    }
+
+    public void NavigateTo(string route)
+    {
+        ShowNavbar(true);
+        Nav.NavigateTo(route);
+    }
+
+    public void ShowNavbar(bool visibility)
+    {
+        header = !visibility;
+        Invisible = visibility ? " animate_animated  animate_fadeOut" : " animate_animated  animate_fadeIn ";
+    }
+}

@@ -1,0 +1,96 @@
+﻿@page "/"
+@inject NavigationManager Nav
+
+<PageTitle>Kendiro</PageTitle>
+
+@if (MenuIndex == 1)
+{
+
+    <div class="col text-md-center m-2 text-primary">
+        <button type="button" class="btn btnMenu k-danger" @onclick="@(()=>NavigateTo("/Principal"))">New game</button>
+    </div>
+
+    <div class="col text-md-center m-2 text-primary">
+        <button type="button" class="btn btnMenu k-inverse" @onclick="@(()=>ChangeMenu(2))">Load game</button>
+    </div>
+
+    <div class="col text-md-center m-2 text-primary">
+        <button type="button" class="btn btnMenu k-inverse" @onclick="@(()=>ChangeMenu(3))">Save game</button>
+    </div>
+}
+
+@if (MenuIndex == 2)
+{
+
+
+    <div class="col text-md-center m-2 text-primary">
+        <button type="button" class="btn btnMenu k-inverse" @onclick="@(()=>ChangeMenu(1))">Game one</button>
+    </div>
+}
+else if (MenuIndex == 3)
+{
+    <div class="col text-md-center m-2 text-primary">
+        <EditForm Model=@SaveTitle>
+            <input type="text" @bind-value="SaveTitle" class="inputCorrection" />
+            <input type="submit" value="Salva" class="btn k-success" @onclick="@(()=>Save(SaveTitle))" />
+        </EditForm>
+    </div>
+}
+
+@if (MenuIndex != 1)
+{
+    <div class="col text-md-center m-2 text-primary">
+        <button type="button" class="btn btnMenu k-danger" @onclick="@(()=>ChangeMenu(1))">Back</button>
+    </div>
+}
+
+
+
+
+
+
+@code {
+    [CascadingParameter] public MainLayout Main { get; set; }
+    public int MenuIndex { get; set; } = 1;
+    public string SaveTitle { get; set; } = "";
+
+
+    protected override async Task OnInitializedAsync()
+    {
+
+    }
+
+    protected void NavigateTo(string route)
+    {
+        Main.ShowNavbar(false);
+        Nav.NavigateTo(route);
+    }
+
+    protected void ChangeMenu(int changeIndex)
+    {
+        MenuIndex = changeIndex;
+
+        switch (MenuIndex)
+        {
+            case 2:
+                Console.WriteLine("Switch in carica partita");
+                break;
+            case 3:
+                Console.WriteLine("Switch in salva partita");
+                break;
+            default:
+                break;
+        }
+    }
+
+    protected void Load()
+    {
+        Console.WriteLine("Caricato file ");
+    }
+
+    protected void Save(string title)
+    {
+        Console.WriteLine("Salvato come " + title);
+    }
+
+}

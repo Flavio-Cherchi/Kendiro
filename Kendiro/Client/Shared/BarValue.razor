@@ -1,0 +1,80 @@
+﻿<div class="row">
+    <div class="col-2"></div>
+    <div class="col-8">
+        @if (Money > 10)
+        {
+            <Button Class="btn k-warning" @onclick="@(()=>ChangerMultiplier(0.1))">+</Button>
+        }
+        <b>@Score</b><Progress Value="@Knowledge" Max="@MaxValue" />
+    </div>
+
+    <p>Testing</p>
+    <p>Score = @Score</p>
+    <p>Knowledge = @Knowledge</p>
+    <p>Maxvalue = @MaxValue</p>
+    <p>Money = @Money</p>
+    <p>Multiplier = @Multiplier</p>
+</div>
+
+@code {
+    [CascadingParameter] public MainLayout Main { get; set; }
+    public int Source { get; set; }
+    public double Multiplier { get; set; } = 1;
+    public int Score { get; set; } = 1;
+    public int MaxValue { get; set; } = 100;
+    public int Money { get; set; } = 0;
+
+    public int Knowledge { get; set; } = 0;
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        Source = Main.Source;
+    }
+
+    protected override void OnParametersSet()
+    {
+        if (Source != Main.Source)
+        {
+            ChangeParameters();
+        }
+    }
+
+    public void ChangerPrimary()
+    {
+        Knowledge += (int)(10 * Multiplier);
+        Money += (int)(1 * Multiplier);
+
+        if ((Score % 10) == 0)
+        {
+            MaxValue += 10;
+            Score += 1;
+        }
+        else
+        {
+            if (Knowledge >= MaxValue)
+            {
+                Knowledge = 0;
+                Score += 1;
+            }
+        }
+    }
+
+    public void ChangerMultiplier(double change)
+    {
+        Multiplier = Multiplier + change;
+        Money -= 10;
+    }
+
+    public void ChangerScore()
+    {
+        if ((Score % 100) == 0)
+            Multiplier += 1;
+    }
+
+    public void ChangeParameters()
+    {
+        ChangerPrimary();
+        //ChangerScore();
+    }
+}
