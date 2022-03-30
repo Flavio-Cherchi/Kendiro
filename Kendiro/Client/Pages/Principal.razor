@@ -17,9 +17,9 @@
     <div class="col-8">
         <label><b>Study</b><i class="fa-solid fa-fw fa-star"></i> @Score score</label>
         <b></b><Progress Value="@Knowledge" Max="@MaxValue" />
-        <label class="float-start">@Money/@Cost<i class="fa-solid fa-fw fa-sack-dollar"></i></label>
-        <labe><i class="fa-solid fa-fw fa-graduation-cap"></i> @Knowledge / @MaxValue</labe>
-        <label class="float-end">@Score/100<i class="fa-solid fa-fw fa-sack-dollar"></i></label>
+        <label class="f-size10 float-start">@Money/@Cost<i class="fa-solid fa-fw fa-sack-dollar"></i></label>
+        <labe class="f-size10"><i class="fa-solid fa-fw fa-graduation-cap"></i> @Knowledge / @MaxValue</labe>
+        <label class="f-size10 float-end">@Score/100<i class="fa-solid fa-fw fa-sack-dollar"></i></label>
     </div>
     <div class="col-2 btnRight">
         <Button Class="btn k-inverse" Disabled="Score < 100" @onclick="@(()=>ChangeWage())"><i class="fa-solid fa-money-bill-trend-up"></i></Button>

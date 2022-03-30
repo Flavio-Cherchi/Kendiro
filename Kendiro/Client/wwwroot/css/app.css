@@ -72,6 +72,10 @@ a, .btn-link {
     text-align: center;
 }
 
+.f-size10{
+    font-size: 10px;
+}
+
 
 .validation-message {
     color: red;
