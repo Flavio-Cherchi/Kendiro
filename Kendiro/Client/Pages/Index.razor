@@ -1,4 +1,5 @@
 ﻿@page "/"
+@using Kendiro.Client.Models
 @inject NavigationManager Nav
 
 <PageTitle>Kendiro</PageTitle>
@@ -7,7 +8,7 @@
 {
 
     <div class="col text-md-center m-2 text-primary">
-        <button type="button" class="btn btnMenu k-danger" @onclick="@(()=>NavigateTo("/Principal"))">New game</button>
+        <button type="button" class="btn btnMenu k-danger" @onclick="@(()=>ChangeMenu(4))">New game</button>
     </div>
 
     <div class="col text-md-center m-2 text-primary">
@@ -17,9 +18,7 @@
     <div class="col text-md-center m-2 text-primary">
         <button type="button" class="btn btnMenu k-inverse" @onclick="@(()=>ChangeMenu(3))">Save game</button>
     </div>
-}
-
-@if (MenuIndex == 2)
+} else @if (MenuIndex == 2)
 {
 
 
@@ -36,8 +35,20 @@ else if (MenuIndex == 3)
         </EditForm>
     </div>
 }
+else if (MenuIndex == 4)
+{
+<RadioGroup TValue="int" Name="colors" @bind-CheckedValue="@checkedValue" Orientation="Orientation.Horizontal">
+    <Radio Value="@(0)">Red</Radio>
+    <Radio Value="@(1)">Green</Radio>
+    <Radio Value="@(2)">Blue</Radio>
+</RadioGroup>
 
-@if (MenuIndex != 1)
+    <div class="col text-md-center m-2 text-primary">
+        <button type="button" class="btn btnMenu k-danger" @onclick="@(()=>New())">Confirm</button>
+    </div>
+}
+
+@if (MenuIndex != 1 && MenuIndex != 4)
 {
     <div class="col text-md-center m-2 text-primary">
         <button type="button" class="btn btnMenu k-danger" @onclick="@(()=>ChangeMenu(1))">Back</button>
@@ -53,6 +64,7 @@ else if (MenuIndex == 3)
     [CascadingParameter] public MainLayout Main { get; set; }
     public int MenuIndex { get; set; } = 1;
     public string SaveTitle { get; set; } = "";
+    public int checkedValue = 0;
 
 
     protected override async Task OnInitializedAsync()
@@ -92,5 +104,13 @@ else if (MenuIndex == 3)
     {
         Console.WriteLine("Salvato come " + title);
     }
+
+    protected void New()
+    {
+        Symbiont current = new Symbiont();
+        //NavigateTo("/Principal/" + checkedValue);
+        NavigateTo("/Principal/");
+    }
+
 
 }

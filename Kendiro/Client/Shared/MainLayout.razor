@@ -72,7 +72,7 @@
 
     public void NavigateTo(string route)
     {
-        ShowNavbar(true);
+        ShowNavbar(route == "/");
         Nav.NavigateTo(route);
     }
 

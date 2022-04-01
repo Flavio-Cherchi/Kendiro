@@ -1,31 +1,40 @@
-﻿<div class="row">
-    <div class="col-2"></div>
-    <div class="col-8">
-        @if (Money > 10)
-        {
-            <Button Class="btn k-warning" @onclick="@(()=>ChangerMultiplier(0.1))">+</Button>
-        }
-        <b>@Score</b><Progress Value="@Knowledge" Max="@MaxValue" />
-    </div>
+﻿@using Kendiro.Client.Models
 
-    <p>Testing</p>
-    <p>Score = @Score</p>
-    <p>Knowledge = @Knowledge</p>
-    <p>Maxvalue = @MaxValue</p>
-    <p>Money = @Money</p>
-    <p>Multiplier = @Multiplier</p>
+<div class="row">
+    <div class="col-2 btnLeft">
+        <Button Class="btn k-danger" Disabled="Money < 10" @onclick="@(()=>ButtonOne(1))"><i class="fas fa-donate"></i></Button>
+        <label>Speed</label>
+    </div>
+    <div class="col-8">
+        <label><b>@Model.Title</b><i class="fa-fw @Model.Icon"></i> @Score score</label>
+        <b></b><Progress Value="@Knowledge" Max="@MaxValue" />
+        <label class="f-size10 float-start">@Money/@Cost<i class="fa-solid fa-fw fa-sack-dollar"></i></label>
+        <labe class="f-size10"><i class="fa-solid fa-fw fa-graduation-cap"></i> @Knowledge / @MaxValue</labe>
+        <label class="f-size10 float-end">@Score/100<i class="@Model.Icon"></i></label>
+    </div>
+    <div class="col-2 btnRight">
+        <Button Class="btn k-inverse" Disabled="Score < 100" @onclick="@(()=>ButtonTwo())"><i class="fa-solid fa-money-bill-trend-up"></i></Button>
+        <label>Wage</label>
+    </div>
+    <p style="font-size:10px;">Testing ->Multiplier = @Multiplier</p>
+
+
 </div>
 
 @code {
     [CascadingParameter] public MainLayout Main { get; set; }
+    [Parameter] public EventCallback<int> EffectOne { get; set; }
+    [Parameter] public EventCallback<int> EffectTwo { get; set; }
+    [Parameter] public BarModel Model { get; set; }
     public int Source { get; set; }
-    public double Multiplier { get; set; } = 1;
-    public int Score { get; set; } = 1;
-    public int MaxValue { get; set; } = 100;
-    public int Money { get; set; } = 0;
+    public double Multiplier { get; set; }
+    public int Score { get; set; }
+    public int MaxValue { get; set; }
+    public int Money { get; set; }
+    public int Wage { get; set; }
+    public int Cost { get; set; }
 
     public int Knowledge { get; set; } = 0;
-
 
     protected override async Task OnInitializedAsync()
     {
@@ -38,43 +47,55 @@
         {
             ChangeParameters();
         }
+
+        if (Multiplier == 0) Multiplier = Model.Multiplier;
+        if (Score == 0) Score = Model.Score;
+        if (MaxValue == 0) MaxValue = Model.MaxValue;
+        if (Money == 0) Money = Model.Money;
+        if (Cost == 0) Cost = Model.Cost;
+        if (Wage == 0) Wage = Model.Wage;
     }
 
-    public void ChangerPrimary()
+    public void ChangePrimary()
     {
-        Knowledge += (int)(10 * Multiplier);
-        Money += (int)(1 * Multiplier);
+        Knowledge += (int)(100 * Multiplier);
 
-        if ((Score % 10) == 0)
+        if ((Score % 100) == 0)
         {
-            MaxValue += 10;
-            Score += 1;
+            MaxValue += (int)MaxValue / 2;
+            Score += 10;
         }
         else
         {
             if (Knowledge >= MaxValue)
             {
                 Knowledge = 0;
-                Score += 1;
+                Score += 10;
             }
         }
     }
 
-    public void ChangerMultiplier(double change)
+    public void ButtonOne(double change)
     {
         Multiplier = Multiplier + change;
-        Money -= 10;
+        EffectOne.InvokeAsync(10);
+        ChangeCost();
     }
 
-    public void ChangerScore()
+    public void ButtonTwo()
     {
-        if ((Score % 100) == 0)
-            Multiplier += 1;
+        EffectTwo.InvokeAsync((int)(Wage / 10));
+        Score -= 100;
+    }
+    public void ChangeCost()
+    {
+        Cost += (int)Cost / 10;
     }
 
     public void ChangeParameters()
     {
-        ChangerPrimary();
-        //ChangerScore();
+        ChangePrimary();
+        if ((Score % 100) == 0)
+            ChangeCost();
     }
 }

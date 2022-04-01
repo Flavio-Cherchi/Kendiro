@@ -1,4 +1,5 @@
 ﻿@page "/principal"
+@using Kendiro.Client.Models
 
 <PageTitle>Kendiro Masen</PageTitle>
 
@@ -9,48 +10,34 @@
 
 <br />
 <br />
-<div class="row">
-    <div class="col-2 btnLeft">
-        <Button Class="btn k-danger" Disabled="Money < 10" @onclick="@(()=>ChangeMultiplier(1))"><i class="fas fa-donate"></i></Button>
-        <label>Speed</label>
-    </div>
-    <div class="col-8">
-        <label><b>Study</b><i class="fa-solid fa-fw fa-star"></i> @Score score</label>
-        <b></b><Progress Value="@Knowledge" Max="@MaxValue" />
-        <label class="f-size10 float-start">@Money/@Cost<i class="fa-solid fa-fw fa-sack-dollar"></i></label>
-        <labe class="f-size10"><i class="fa-solid fa-fw fa-graduation-cap"></i> @Knowledge / @MaxValue</labe>
-        <label class="f-size10 float-end">@Score/100<i class="fa-solid fa-fw fa-sack-dollar"></i></label>
-    </div>
-    <div class="col-2 btnRight">
-        <Button Class="btn k-inverse" Disabled="Score < 100" @onclick="@(()=>ChangeWage())"><i class="fa-solid fa-money-bill-trend-up"></i></Button>
-        <label>Wage</label>
-    </div>
+<BarValue
+Model = "@Study"
+EffectOne=ChangeMoney
+EffectTwo=ChangeWage
+></BarValue>
 
-
-</div>
-<div>
-    <br />
-    <br />
-    <p>Testing</p>
-    <p>Multiplier = @Multiplier</p>
-</div>
+<BarValue
+Model = "@Work"
+EffectOne=ChangeMoney
+EffectTwo=ChangeWage
+></BarValue>
 
 @code {
     [CascadingParameter] public MainLayout Main { get; set; }
     public int Source { get; set; }
-    public double Multiplier { get; set; } = 1;
-    public int Score { get; set; } = 10;
-    public int MaxValue { get; set; } = 1000;
     public int Money { get; set; } = 0;
     public int Wage { get; set; } = 12;
-    public int Cost { get; set; } = 10;
     public int Age { get; set; } = 18;
+    public BarModel Study = new BarModel();
+    public BarModel Work = new BarModel();
 
     public int Knowledge { get; set; } = 0;
 
     protected override async Task OnInitializedAsync()
     {
         Source = Main.Source;
+        Builder(Study, "Study", "fa-solid fa-star", 1, 10, 1000, Money, Wage, 10);
+        Builder(Work, "Work", "fa-solid fa-briefcase", 2, 15, 3000, Money, Wage, 10);
     }
 
     protected override void OnParametersSet()
@@ -58,50 +45,21 @@
         if (Source != Main.Source)
         {
             ChangeParameters();
+            Builder(Study, "Study", "fa-solid fa-star", 1, 10, 1000, Money, Wage, 10);
+            Builder(Work, "Work", "fa-solid fa-briefcase", 2, 15, 3000, Money, Wage, 10);
         }
     }
 
-    public void ChangePrimary()
+    public void ChangeParameters()
     {
-        Knowledge += (int)(100 * Multiplier);
-
-        if ((Score % 100) == 0)
-        {
-            MaxValue += (int)MaxValue / 2;
-            Score += 10;
-        }
-        else
-        {
-            if (Knowledge >= MaxValue)
-            {
-                Knowledge = 0;
-                Score += 10;
-            }
-        }
+        ChangeAge();
+        ChangeMoneyGeneral();
     }
 
-    public void ChangeMultiplier(double change)
-    {
-        Multiplier = Multiplier + change;
-        Money -= 10;
-        ChangeCost();
-    }
-
-    public void ChangeWage()
-    {
-        Wage += (int)(Wage / 10);
-        Score -= 100;
-    }
-
-    public void ChangeMoney()
+    public void ChangeMoneyGeneral()
     {
         if (Main.DateGame.Day == 1)
             Money += Wage;
-    }
-
-    public void ChangeCost()
-    {
-        Cost += (int)Cost / 10;
     }
 
     public void ChangeAge()
@@ -109,12 +67,30 @@
         Age = @Main.DateGame.Year - 2482;
     }
 
-    public void ChangeParameters()
+
+    #region ChildComponent
+    public void ChangeWage(int fromChild)
     {
-        ChangeAge();
-        ChangeMoney();
-        ChangePrimary();
-        if ((Score % 100) == 0)
-            ChangeCost();
+        Wage += fromChild;
     }
+
+    public void ChangeMoney(int fromChild)
+    {
+        Money -= fromChild;
+    }
+
+    public void Builder(BarModel res, string title,string icon,double multiplier,int score,int maxValue,int money,int wage,int cost)
+    {
+        res.Title = title;
+        res.Icon = icon;
+        res.Multiplier = multiplier;
+        res.Score = score;
+        res.MaxValue = maxValue;
+        res.Money = money;
+        res.Wage = wage;
+        res.Cost = cost;
+    }
+    #endregion
+    
+
 }
