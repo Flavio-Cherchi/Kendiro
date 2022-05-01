@@ -1,0 +1,16 @@
+﻿@page "/dna"
+
+<PageTitle>DNA</PageTitle>
+
+<h1>@DateGame</h1>
+
+<b>Test data second page -></b> @DateGame
+
+@code{
+    [CascadingParameter] DateOnly DateGame {get; set;}
+
+    protected override async Task OnInitializedAsync()
+    {
+
+    }
+}

@@ -1,0 +1,116 @@
+﻿@page "/"
+@using Kendiro.Client.Models
+@inject NavigationManager Nav
+
+<PageTitle>Kendiro</PageTitle>
+
+@if (MenuIndex == 1)
+{
+
+    <div class="col text-md-center m-2 text-primary">
+        <button type="button" class="btn btnMenu k-danger" @onclick="@(()=>ChangeMenu(4))">New game</button>
+    </div>
+
+    <div class="col text-md-center m-2 text-primary">
+        <button type="button" class="btn btnMenu k-inverse" @onclick="@(()=>ChangeMenu(2))">Load game</button>
+    </div>
+
+    <div class="col text-md-center m-2 text-primary">
+        <button type="button" class="btn btnMenu k-inverse" @onclick="@(()=>ChangeMenu(3))">Save game</button>
+    </div>
+} else @if (MenuIndex == 2)
+{
+
+
+    <div class="col text-md-center m-2 text-primary">
+        <button type="button" class="btn btnMenu k-inverse" @onclick="@(()=>ChangeMenu(1))">Game one</button>
+    </div>
+}
+else if (MenuIndex == 3)
+{
+    <div class="col text-md-center m-2 text-primary">
+        <EditForm Model=@SaveTitle>
+            <input type="text" @bind-value="SaveTitle" class="inputCorrection" />
+            <input type="submit" value="Salva" class="btn k-success" @onclick="@(()=>Save(SaveTitle))" />
+        </EditForm>
+    </div>
+}
+else if (MenuIndex == 4)
+{
+<RadioGroup TValue="int" Name="colors" @bind-CheckedValue="@checkedValue" Orientation="Orientation.Horizontal">
+    <Radio Value="@(0)">Red</Radio>
+    <Radio Value="@(1)">Green</Radio>
+    <Radio Value="@(2)">Blue</Radio>
+</RadioGroup>
+
+    <div class="col text-md-center m-2 text-primary">
+        <button type="button" class="btn btnMenu k-danger" @onclick="@(()=>New())">Confirm</button>
+    </div>
+}
+
+@if (MenuIndex != 1 && MenuIndex != 4)
+{
+    <div class="col text-md-center m-2 text-primary">
+        <button type="button" class="btn btnMenu k-danger" @onclick="@(()=>ChangeMenu(1))">Back</button>
+    </div>
+}
+
+
+
+
+
+
+@code {
+    [CascadingParameter] public MainLayout Main { get; set; }
+    public int MenuIndex { get; set; } = 1;
+    public string SaveTitle { get; set; } = "";
+    public int checkedValue = 0;
+
+
+    protected override async Task OnInitializedAsync()
+    {
+
+    }
+
+    protected void NavigateTo(string route)
+    {
+        Main.ShowNavbar(false);
+        Nav.NavigateTo(route);
+    }
+
+    protected void ChangeMenu(int changeIndex)
+    {
+        MenuIndex = changeIndex;
+
+        switch (MenuIndex)
+        {
+            case 2:
+                Console.WriteLine("Switch in carica partita");
+                break;
+            case 3:
+                Console.WriteLine("Switch in salva partita");
+                break;
+            default:
+                break;
+        }
+    }
+
+    protected void Load()
+    {
+        Console.WriteLine("Caricato file ");
+    }
+
+    protected void Save(string title)
+    {
+        Console.WriteLine("Salvato come " + title);
+    }
+
+    protected void New()
+    {
+        Symbiont current = new Symbiont();
+        //NavigateTo("/Principal/" + checkedValue);
+        NavigateTo("/Principal/");
+    }
+
+
+}

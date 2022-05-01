@@ -1,0 +1,97 @@
+﻿@page "/principal"
+@using Kendiro.Client.Models
+@inject Blazored.LocalStorage.ILocalStorageService LocalStorage
+
+<PageTitle>Kendiro Masen</PageTitle>
+
+<h1>Kendiro</h1>
+<h5><i class="fa-solid fa-fw fa-calendar-check"></i>@Age yo</h5>
+<h5><i class="fa-solid fa-fw fa-sack-dollar"></i>@Money money</h5>
+<h5><i class="fa-solid fa-money-check-dollar"></i>@Wage wage</h5>
+
+<br />
+<br />
+<BarValue
+Model = "@Study"
+EffectOne=ChangeMoney
+EffectTwo=ChangeWage
+></BarValue>
+
+<BarValue
+Model = "@Work"
+EffectOne=ChangeMoney
+EffectTwo=ChangeWage
+></BarValue>
+
+@code {
+    [CascadingParameter] public MainLayout Main { get; set; }
+    public int Source { get; set; }
+    public int Money { get; set; } = 0;
+    public int Wage { get; set; } = 12;
+    public int Age { get; set; } = 18;
+    public BarModel Study = new BarModel();
+    public BarModel Work = new BarModel();
+
+    public int Knowledge { get; set; } = 0;
+
+    protected override async Task OnInitializedAsync()
+    {
+        Source = Main.Source;
+        Builder(Study, "Study", "fa-solid fa-star", 1, 10, 1000, Money, Wage, 10);
+        Builder(Work, "Work", "fa-solid fa-briefcase", 2, 15, 3000, Money, Wage, 10);
+    }
+
+    protected override void OnParametersSet()
+    {
+        if (Source != Main.Source)
+        {
+            ChangeParameters();
+            Builder(Study, "Study", "fa-solid fa-star", 1, 10, 1000, Money, Wage, 10);
+            Builder(Work, "Work", "fa-solid fa-briefcase", 2, 15, 3000, Money, Wage, 10);
+        }
+    }
+
+    public void ChangeParameters()
+    {
+        ChangeAge();
+        ChangeMoneyGeneral();
+    }
+
+    public void ChangeMoneyGeneral()
+    {
+        if (Main.DateGame.Day == 1)
+            Money += Wage;
+    }
+
+    public void ChangeAge()
+    {
+        Age = @Main.DateGame.Year - 2482;
+    }
+
+
+    #region ChildComponent
+    public void ChangeWage(int fromChild)
+    {
+        Wage += fromChild;
+    }
+
+    public void ChangeMoney(int fromChild)
+    {
+        Money -= fromChild;
+    }
+
+    public void Builder(BarModel res, string title,string icon,double multiplier,int score,int maxValue,int money,int wage,int cost)
+    {
+        res.Title = title;
+        res.Icon = icon;
+        res.Multiplier = multiplier;
+        res.Score = score;
+        res.MaxValue = maxValue;
+        res.Money = money;
+        res.Wage = wage;
+        res.Cost = cost;
+    }
+    #endregion
+    
+
+}
