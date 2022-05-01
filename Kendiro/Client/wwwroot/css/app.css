@@ -42,10 +42,6 @@ a, .btn-link {
     outline: 1px solid red;
 }
 
-button:disabled {
-   opacity:0.0;
-}
-
 .btnLeft {
     margin-top: 15px;
 }
